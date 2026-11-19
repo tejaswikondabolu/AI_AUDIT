@@ -89,7 +89,7 @@ class QueryResponse(BaseModel):
     answer_needs_verification: bool = False
     route: str = "rag"
     ragas: dict[str, Any] = Field(default_factory=dict)
-    structured_data: dict[str, Any] = Field(default_factory=dict)
+    structured_data: dict[str, Any] | list[dict[str, Any]] = Field(default_factory=dict)
 # ------------------------------------------------------------------
 # Startup / shutdown
 # ------------------------------------------------------------------
@@ -489,7 +489,7 @@ async def upload_invoice(
             )
 
         checksum = calculate_sha256(destination)
-        update_processing_stage(None, file.filename, checksum, "queued", "Uploaded / queued", 5, "queued", "File received and waiting for the invoice watcher.")
+        #update_processing_stage(None, file.filename, checksum, "queued", "Uploaded / queued", 5, "queued", "File received and waiting for the invoice watcher.")
         existing = db.fetch_one(
             """SELECT invoice_id, file_name, invoice_number, vendor_name,
                       validation_status, recommendation
@@ -508,6 +508,18 @@ async def upload_invoice(
                 "Duplicate invoice upload linked to existing record invoice_id=%s file=%s",
                 existing["invoice_id"], safe_name,
             )
+            update_processing_stage(
+                existing["invoice_id"],
+                safe_name,
+                checksum,
+                "duplicate",
+                "Duplicate detected",
+                100,
+                "complete",
+                "Already processed. Linked to the existing invoice record."
+            )
+
+
             return {
                 "status": "duplicate",
                 "filename": file.filename,
@@ -522,6 +534,16 @@ async def upload_invoice(
                     "It was linked to the existing invoice record; no duplicate audit record was created."
                 ),
             }
+        update_processing_stage(
+            None,
+            file.filename,
+            checksum,
+            "queued",
+            "Uploaded / queued",
+            5,
+            "queued",
+            "File received and waiting for the invoice watcher."
+        )
 
         logger.info(
             "Invoice uploaded: original=%s stored=%s bytes=%s",

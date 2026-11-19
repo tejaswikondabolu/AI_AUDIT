@@ -45,3 +45,26 @@ Thumbs.db
 # Archives
 *.zip
 *.7z
+.env
+.env.*
+!.env.example
+venv/
+.venv/
+__pycache__/
+*.pyc
+.git/
+
+# Temporary backups and testing
+*.bak
+testing.py
+
+# Credentials
+.aws/
+credentials
+secrets/
+*.pem
+*.key
+
+# Generated files
+__pycache__/
+*.pyc

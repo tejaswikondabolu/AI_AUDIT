@@ -359,7 +359,7 @@ def _tracked(name: str, fn):
                 live_status = "complete"
             else:
                 live_status = "processing"
-            update_processing_stage(state.get("invoice_id") or result.get("invoice_id"), state.get("file_name"), state.get("file_checksum"),
+            update_processing_stage(result.get("invoice_id") or state.get("invoice_id"), state.get("file_name"), state.get("file_checksum"),
                                    stage, label, progress, live_status,
                                    str(result.get("message") or f"{label} completed."), error)
         return result

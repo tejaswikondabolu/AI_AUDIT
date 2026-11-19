@@ -140,21 +140,6 @@ def revalidate_invoice(
     )
 
 
-def ask_ai(
-    question: str,
-    invoice_id: str | None = None,
-) -> dict[str, Any]:
-
-    payload = {
-        "question": question,
-        "invoice_id": invoice_id,
-    }
-
-    return _request(
-        "POST",
-        "/api/query",
-        json=payload,
-    )
 
 def clear_pending_queue() -> dict[str, Any]:
     return _request("DELETE", "/api/uploads/queue")
@@ -191,6 +176,15 @@ def save_human_feedback(invoice_id: str, feedback: str) -> dict[str, Any]:
 
 def get_comparison(invoice_id: str) -> dict[str, Any]:
     return _request("GET", f"/api/invoices/{invoice_id}/comparison")
+
+
+def ask_ai(question: str, invoice_id: str | None = None) -> dict[str, Any]:
+    """Ask a question using the agent's SQL/RAG query endpoint."""
+    return _request(
+        "POST",
+        "/api/query",
+        json={"question": question, "invoice_id": invoice_id},
+    )
 
 
 def get_rag_evaluations(invoice_id: str) -> list[dict[str, Any]]:

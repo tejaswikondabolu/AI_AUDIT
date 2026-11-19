@@ -3,7 +3,7 @@ from __future__ import annotations
 from decimal import Decimal
 from typing import Any
 
-from agent.services.database import get_connection
+from agent.services.database import db
 
 
 def _to_json_value(value: Any) -> Any:
@@ -17,72 +17,16 @@ def _fetch_one(
     query: str,
     params: tuple[Any, ...],
 ) -> dict[str, Any] | None:
-    """
-    Execute one predefined read-only SQL query.
-    """
-
-    connection = get_connection()
-
-    try:
-        with connection.cursor() as cursor:
-            cursor.execute(query, params)
-
-            row = cursor.fetchone()
-
-            if row is None:
-                return None
-
-            columns = [
-                description[0]
-                for description in cursor.description
-            ]
-
-            return {
-                column: _to_json_value(value)
-                for column, value in zip(
-                    columns,
-                    row,
-                )
-            }
-
-    finally:
-        connection.close()
+    """Execute one predefined read-only SQL query."""
+    return db.fetch_one(query, params)
 
 
 def _fetch_all(
     query: str,
     params: tuple[Any, ...] = (),
 ) -> list[dict[str, Any]]:
-    """
-    Execute a predefined read-only SQL query.
-    """
-
-    connection = get_connection()
-
-    try:
-        with connection.cursor() as cursor:
-            cursor.execute(query, params)
-
-            rows = cursor.fetchall()
-
-            columns = [
-                description[0]
-                for description in cursor.description
-            ]
-
-            return [
-                {
-                    column: _to_json_value(value)
-                    for column, value in zip(
-                        columns,
-                        row,
-                    )
-                }
-                for row in rows
-            ]
-
-    finally:
-        connection.close()
+    """Execute a predefined read-only SQL query."""
+    return db.fetch_all(query, params)
 
 
 def invoice_details(

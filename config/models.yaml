@@ -6,12 +6,12 @@ models:
 
   rag_generation:
     provider: bedrock
-    model: cohere.command-r-plus-v1:0
+    model: amazon.nova-lite-v1:0
     temperature: 0.0
 
   translation:
     provider: bedrock
-    model: cohere.command-r-plus-v1:0
+    model: amazon.nova-lite-v1:0
     temperature: 0.0
 
 rag:

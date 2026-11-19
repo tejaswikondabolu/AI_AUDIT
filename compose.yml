@@ -124,8 +124,10 @@ services:
       OCR_LANGUAGES: ${OCR_LANGUAGES:-eng+vie}
 
       # AWS shared credentials/config paths
-      AWS_SHARED_CREDENTIALS_FILE: /root/.aws/credentials
-      AWS_CONFIG_FILE: /root/.aws/config
+      #AWS_SHARED_CREDENTIALS_FILE: /root/.aws/credentials
+      #AWS_CONFIG_FILE: /root/.aws/config
+      AWS_SHARED_CREDENTIALS_FILE: /home/appuser/.aws/credentials
+      AWS_CONFIG_FILE: /home/appuser/.aws/config
     ports:
       - "8010:8000"
     depends_on:
@@ -140,7 +142,8 @@ services:
     volumes:
       - ./data/incoming:/app/data/incoming
       - ./outputs/reports:/app/outputs/reports
-      - /home/labuser/.aws:/root/.aws:ro
+      #- /home/labuser/.aws:/root/.aws:ro
+      - /home/labuser/.aws:/home/appuser/.aws:ro
     healthcheck:
       test:
         [
